@@ -31,9 +31,9 @@ function init() {
 	scene.add(reticle);
 
 	// Add AR button for enabling AR mode
-	document.body.appendChild(
-		ARButton.createButton(renderer, { requiredFeatures: ["hit-test"] })
-	);
+	// document.body.appendChild(
+	// 	ARButton.createButton(renderer, { requiredFeatures: ["hit-test"] })
+	// );
 
 	// Start the render loop
 	renderer.setAnimationLoop(render);
