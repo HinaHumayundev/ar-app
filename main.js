@@ -1,11 +1,11 @@
-// Main.js
+// No need to import THREE or ARButton anymore, as they're available globally
+
 let scene, camera, renderer;
 let reticle;
 
-function init() {
+async function init() {
 	scene = new THREE.Scene();
 
-	// Create a camera with AR capabilities
 	camera = new THREE.PerspectiveCamera(
 		70,
 		window.innerWidth / window.innerHeight,
@@ -18,11 +18,11 @@ function init() {
 
 	document.body.appendChild(renderer.domElement);
 
-	// Add a light source
+	// Add light
 	const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
 	scene.add(light);
 
-	// Create a reticle for detecting surfaces
+	// Create reticle for surface detection
 	const geometry = new THREE.RingGeometry(0.05, 0.1, 32).rotateX(-Math.PI / 2);
 	const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 	reticle = new THREE.Mesh(geometry, material);
@@ -30,12 +30,16 @@ function init() {
 	reticle.visible = false;
 	scene.add(reticle);
 
-	// Add AR button for enabling AR mode
-	// document.body.appendChild(
-	// 	ARButton.createButton(renderer, { requiredFeatures: ["hit-test"] })
-	// );
+	// Automatically request AR mode without button
+	try {
+		const session = await navigator.xr.requestSession("immersive-ar", {
+			requiredFeatures: ["hit-test"],
+		});
+		renderer.xr.setSession(session);
+	} catch (e) {
+		console.error("Failed to start AR session:", e);
+	}
 
-	// Start the render loop
 	renderer.setAnimationLoop(render);
 }
 
@@ -44,21 +48,11 @@ function render(timestamp, frame) {
 		const referenceSpace = renderer.xr.getReferenceSpace();
 		const session = renderer.xr.getSession();
 
-		// Use hit test to detect flat surfaces
-		const viewerPose = frame.getViewerPose(referenceSpace);
-
-		if (viewerPose) {
-			const hitTestSource = session
-				.requestReferenceSpace("viewer")
-				.then((refSpace) => {
-					return session.requestHitTestSource({ space: refSpace });
-				});
-
-			hitTestSource.then((source) => {
+		session.requestReferenceSpace("viewer").then((refSpace) => {
+			session.requestHitTestSource({ space: refSpace }).then((source) => {
 				const hitTestResults = frame.getHitTestResults(source);
 				if (hitTestResults.length > 0) {
 					const hit = hitTestResults[0];
-
 					const hitPose = hit.getPose(referenceSpace);
 					reticle.visible = true;
 					reticle.matrix.fromArray(hitPose.transform.matrix);
@@ -66,7 +60,7 @@ function render(timestamp, frame) {
 					reticle.visible = false;
 				}
 			});
-		}
+		});
 	}
 	renderer.render(scene, camera);
 }
