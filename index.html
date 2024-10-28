@@ -117,18 +117,43 @@
 
 				function onSelect() {
 					if (reticle.visible) {
-						const material = new THREE.MeshPhongMaterial({
-							color: 0xffffff * Math.random(),
-						});
-						const mesh = new THREE.Mesh(geometry, material);
-						reticle.matrix.decompose(
-							mesh.position,
-							mesh.quaternion,
-							mesh.scale
+						// Create trunk geometry and material
+						const trunkGeometry = new THREE.CylinderGeometry(
+							0.05,
+							0.05,
+							0.5,
+							16
 						);
-						mesh.scale.y = Math.random() * 2 + 1;
-						scene.add(mesh);
-						score++; // Increment score each time an object is added
+						const trunkMaterial = new THREE.MeshPhongMaterial({
+							color: 0x8b4513,
+						});
+						const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+						trunk.position.y = 0.25; // Raise the trunk so the base aligns with the ground
+
+						// Create foliage geometry and material
+						const foliageGeometry = new THREE.SphereGeometry(0.15, 16, 8);
+						const foliageMaterial = new THREE.MeshPhongMaterial({
+							color: 0x228b22,
+						});
+						const foliage = new THREE.Mesh(foliageGeometry, foliageMaterial);
+						foliage.position.y = 0.5; // Position foliage on top of the trunk
+
+						// Group trunk and foliage together to form a tree
+						const tree = new THREE.Group();
+						tree.add(trunk);
+						tree.add(foliage);
+
+						// Set the tree position and orientation to match the reticle
+						reticle.matrix.decompose(
+							tree.position,
+							tree.quaternion,
+							tree.scale
+						);
+
+						// Add the tree to the scene
+						scene.add(tree);
+
+						score++; // Increment score each time a tree is planted
 						saveScore();
 					}
 				}
