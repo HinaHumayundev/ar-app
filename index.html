@@ -41,6 +41,16 @@
 				color: white;
 				margin-top: 10px;
 			}
+			#scoreDisplay {
+				position: fixed;
+				top: 10px;
+				left: 10px;
+				color: white;
+				background-color: rgba(0, 0, 0, 0.7);
+				padding: 10px;
+				border-radius: 5px;
+				font-size: 18px;
+			}
 		</style>
 	</head>
 	<body>
@@ -54,6 +64,7 @@
 			<div id="highScores"></div>
 		</div>
 		<audio id="congratsAudio" src="clapping.mp3" preload="auto"></audio>
+		<div id="scoreDisplay">Planted Tree: 0</div>
 
 		<script type="importmap">
 			{
@@ -161,6 +172,7 @@
 
 						score++; // Increment score each time a tree is planted
 						saveScore();
+						updateScoreDisplay();
 					}
 				}
 
@@ -257,6 +269,11 @@
 				document.getElementById("highScores").innerHTML =
 					highScoreText || "No high scores yet.";
 				document.getElementById("highScores").style.display = "block";
+			}
+			function updateScoreDisplay() {
+				document.getElementById(
+					"scoreDisplay"
+				).innerText = `Planted Tree: ${score}`;
 			}
 		</script>
 	</body>
