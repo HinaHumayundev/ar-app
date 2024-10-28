@@ -42,7 +42,7 @@
 				margin-top: 10px;
 			}
 			#scoreDisplay {
-				position: fixed;
+				position: absolute;
 				top: 10px;
 				left: 10px;
 				color: white;
@@ -50,6 +50,7 @@
 				padding: 10px;
 				border-radius: 5px;
 				font-size: 18px;
+				display: none;
 			}
 		</style>
 	</head>
@@ -196,6 +197,7 @@
 					ARButton.createButton(renderer, { requiredFeatures: ["hit-test"] })
 				);
 				document.getElementById("menu").style.display = "none";
+				document.getElementById("scoreDisplay").style.display = "block";
 			}
 
 			function onWindowResize() {
