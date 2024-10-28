@@ -53,6 +53,7 @@
 			</button>
 			<div id="highScores"></div>
 		</div>
+		<audio id="congratsAudio" src="clapping.mp3" preload="auto"></audio>
 
 		<script type="importmap">
 			{
@@ -152,6 +153,11 @@
 
 						// Add the tree to the scene
 						scene.add(tree);
+
+						const congratsAudio = document.getElementById("congratsAudio");
+						if (congratsAudio) {
+							congratsAudio.play();
+						}
 
 						score++; // Increment score each time a tree is planted
 						saveScore();
